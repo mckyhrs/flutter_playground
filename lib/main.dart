@@ -1,109 +1,71 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() {
+ runApp(
+   MyApp(),
+ );
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Startup Name Generator',
-      home: RandomWords(),
+      title: 'AccountBook',
+      home: InputForm(),
     );
   }
 }
 
-class RandomWords extends StatefulWidget {
+class InputForm extends StatefulWidget {
   @override
-  _RandomWordsState createState() => _RandomWordsState();
+  _InputFormState createState() => _InputFormState();
 }
 
-class _RandomWordsState extends State<RandomWords> {
-  final _suggestions = <WordPair>[];
-  final _saved = <WordPair>[];
-  final _biggerFont = const TextStyle(fontSize: 18.0);
+class _InputFormState extends State<InputForm> {
+  String _text = '';
+
+  void _handleText(String e) {
+    setState(() {
+      _text = e;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Startup Name Generator'),
+        title: const Text('Form'),
         actions: [
-          IconButton(onPressed: _pushSaved, icon: Icon(Icons.list))
+          // IconButton(onPressed: _pushSaved, icon: Icon(Icons.list))
         ],
       ),
-      body: _buildSuggestions(),
-    );
-  }
-
-  Widget _buildSuggestions() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemBuilder: (context, i) {
-        if (i.isOdd) return const Divider();
-
-        final index = i ~/ 2;
-        if (index >= _suggestions.length) {
-          _suggestions.addAll(generateWordPairs().take(10));
-        }
-        return _buildRow(_suggestions[index]);
-      }
-    );
-  }
-
-  Widget _buildRow(WordPair pair) {
-    final alreadySaved = _saved.contains(pair);
-    return ListTile(
-      title: Text(
-        pair.asPascalCase,
-        style: _biggerFont,
-      ),
-      trailing: Icon(
-        alreadySaved ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaved ? Colors.red : null,
-      ),
-      onTap: () {
-        setState(() {
-          if (alreadySaved) {
-            _saved.remove(pair);
-          } else {
-            _saved.add(pair);
-          }
-        });
-      }
-    );
-  }
-
-  void _pushSaved() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          final tiles = _saved.map(
-            (WordPair pair) {
-              return ListTile(
-                title: Text(
-                  pair.asPascalCase,
-                  style: _biggerFont,
+      body: Center(
+        child: Container(
+          padding: const EdgeInsets.all(50.0),
+          child: Column(
+            children: <Widget>[
+              Text(
+                "$_text",
+                style: TextStyle(
+                  color: Colors.blueAccent,
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.w500
                 )
-              );
-            },
-          );
-          final divided = ListTile.divideTiles(
-            context: context,
-            tiles: tiles,
-          ).toList();
-
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Save Suggestions'),
-            ),
-            body: ListView(children: divided),
-          );
-        }
+              ),
+              new TextField(
+                maxLength: 10,
+                maxLines: 1,
+                onChanged: _handleText,
+              )
+            ],
+          ),
+        ),
       )
     );
   }
+
+  // void _pushSaved() {
+  //   Navigator.of(context).push(
+  //   );
+  // }
 }
